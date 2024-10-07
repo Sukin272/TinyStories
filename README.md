@@ -19,3 +19,25 @@
 - ```python3 -m data.tinystories``` creates cache of the tinystories dataset
 
 - ```python3 -m models.gpt2``` to check the model on an example input and example generation(gibberish for now).
+
+```
+.
+├── data
+│   ├── 50_stories.json
+│   ├── __init__.py
+│   └── tinystories.py
+├── models
+│   ├── gpt2.py
+│   └── __init__.py
+├── README.md
+├── scripts
+│   ├── evaluate_gpt2_pretrained.py
+│   └── __init__.py
+├── training
+│   └── __init__.py
+└── utils
+    ├── config.py
+    ├── __init__.py
+    ├── llama_together_ai.py
+    └── tokenizer.py
+```
