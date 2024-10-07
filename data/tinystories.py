@@ -92,7 +92,6 @@ class TinyStoriesDataModule(L.LightningDataModule):
         )
 
     def collate_fn(self, batch):
-        batch = [chunk[:-1] if len(chunk) % 2 != 0 else chunk for chunk in batch]
 
         padded_batch = pad_sequence(
             [torch.LongTensor(chunk) for chunk in batch],
