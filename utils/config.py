@@ -22,7 +22,7 @@ class TokenizerConfig:
 class ModelConfig:
     name: str = "gpt2"
     gpt2: Dict[str, int] = field(
-        default_factory=lambda: {"hidden_size": 128, "layers": 2, "heads": 4}
+        default_factory=lambda: {"hidden_size": 128, "layers": 12, "heads": 4}
     )
 
 

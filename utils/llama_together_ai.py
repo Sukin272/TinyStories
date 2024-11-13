@@ -9,7 +9,7 @@ model = None
 
 def load_model():
     global model
-    genai.configure(api_key="AIzaSyD_HrTyh3DEf9N3C5IMe_4z5P4yW1uDxV8")
+    genai.configure(api_key="AIzaSyC73mt4Sv6F26cc-_AJDzmWpF0V02dzG8U")
     model=genai.GenerativeModel("gemini-1.5-flash")
     # model = Together(api_key=os.getenv("TOGETHER_API_KEY"))
     return model
