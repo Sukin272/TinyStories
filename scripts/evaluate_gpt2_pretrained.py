@@ -67,7 +67,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
 
 def main():
     tokenizer = gpt2_tokenizer()
-    model = AutoModelForCausalLM.from_pretrained("openai-community/gpt2-large").to(device)
+    model = AutoModelForCausalLM.from_pretrained("openai-community/gpt2-medium").to(device)
     # prompt = "Once upon a time there was"
 
     # input_ids = tokenizer.encode(prompt, return_tensors="pt")
@@ -76,6 +76,7 @@ def main():
     # print(output_text)
     ret = evaluate_model(model, tokenizer)
     print(ret)
+    json.dump(ret, open("data/gpt2med_eval.json", "w"), indent=4)
 
 if __name__ == "__main__":
     main()
