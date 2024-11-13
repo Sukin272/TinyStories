@@ -3,8 +3,10 @@ import torch
 import json
 import random
 from tqdm import tqdm
+import time
 from utils.llama_together_ai import evaluate_story
-from utils.tokenizer import gpt2_tokenizer, gpt_neo_tokenizer
+from utils.tokenizer import gpt2_tokenizer
+from models.gpt2 import GPT2 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -36,7 +38,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
                 break
 
             input_ids = tokenizer.encode(story, return_tensors="pt").to(device)
-            output = model.generate(input_ids, max_length = 1000, num_beams=1, pad_token_id=tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
+            output = model.model.generate(input_ids, max_length = 512, pad_token_id=tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
             output_text = tokenizer.decode(output[0], skip_special_tokens=True)
             story_for_prompt = story[ll:] + " ***" + output_text[len(story) :]
             
@@ -46,6 +48,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
             # return
 
             eval_msg = evaluate_story(story_for_prompt)
+            time.sleep(10)
             evals = json.loads(eval_msg)
 
             avg_grammar += evals["grammar"]
@@ -66,9 +69,11 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
     }
 
 def main():
-    
-    tokenizer = gpt_neo_tokenizer()
-    model = AutoModelForCausalLM.from_pretrained("openai-community/gpt2-large").to(device)
+    tokenizer = gpt2_tokenizer()
+    model = GPT2(tokenizer)
+    checkpoint=torch.load("models/gpt2_128_12.ckpt")
+    model.load_state_dict(checkpoint["state_dict"])
+    model=model.to(device)
     # prompt = "Once upon a time there was"
 
     # input_ids = tokenizer.encode(prompt, return_tensors="pt")
@@ -77,7 +82,7 @@ def main():
     # print(output_text)
     ret = evaluate_model(model, tokenizer)
     print(ret)
-    json.dump(ret, open("data/gpt2med_eval.json", "w"), indent=4)
+    json.dump(ret, open("data/gpt2_128_12_eval.json", "w"), indent=4)
 
 if __name__ == "__main__":
     main()
