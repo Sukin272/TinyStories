@@ -14,6 +14,15 @@ def gpt2_tokenizer():
 
     return tokenizer
 
+def gpt_neo_tokenizer():
+    tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neo-125M")
+    tokenizer.model_max_length = 1_000_000  # disable warnings
+
+    tokenizer.add_special_tokens({"cls_token": "<|cls|>"})
+    tokenizer.add_special_tokens({"bos_token": "<|startoftext|>"})
+    tokenizer.add_special_tokens({"pad_token": "<|pad|>"})
+
+    return tokenizer
 
 def main():
     tokenizer = gpt2_tokenizer()

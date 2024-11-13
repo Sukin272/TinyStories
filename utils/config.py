@@ -12,7 +12,7 @@ class DataConfig:
 
 @dataclass
 class TokenizerConfig:
-    name: str = "gpt2"
+    name: str = "gpt_neo"
     cache_dir: str = (
         ".cache/tokenizer"
     )
