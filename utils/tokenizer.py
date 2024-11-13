@@ -25,7 +25,7 @@ def gpt_neo_tokenizer():
     return tokenizer
 
 def main():
-    tokenizer = gpt2_tokenizer()
+    tokenizer = gpt_neo_tokenizer()
     print(tokenizer)
 
 

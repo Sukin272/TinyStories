@@ -5,7 +5,7 @@ import random
 from tqdm import tqdm
 import time
 from utils.llama_together_ai import evaluate_story
-from utils.tokenizer import gpt2_tokenizer
+from utils.tokenizer import gpt_neo_tokenizer
 from models.gpt2 import GPT2 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -69,7 +69,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
     }
 
 def main():
-    tokenizer = gpt2_tokenizer()
+    tokenizer = gpt_neo_tokenizer()
     model = GPT2(tokenizer)
     checkpoint=torch.load("models/gpt2_128_12.ckpt")
     model.load_state_dict(checkpoint["state_dict"])
