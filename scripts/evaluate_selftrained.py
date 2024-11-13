@@ -70,10 +70,16 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
 
 def main():
     tokenizer = gpt_neo_tokenizer()
-    model = GPT2(tokenizer)
-    checkpoint=torch.load("models/gpt2_128_12.ckpt")
-    model.load_state_dict(checkpoint["state_dict"])
-    model=model.to(device)
+
+    # model = GPT2(tokenizer)
+    # checkpoint=torch.load("checkpoints/gpt2_128_12.ckpt")
+    # model.load_state_dict(checkpoint["state_dict"])
+    # model=model.to(device)
+
+    model = GPT2.load_from_checkpoint(
+        "checkpoints/gpt2_128_12.ckpt", tokenizer=tokenizer
+    ).to(device)
+
     # prompt = "Once upon a time there was"
 
     # input_ids = tokenizer.encode(prompt, return_tensors="pt")
