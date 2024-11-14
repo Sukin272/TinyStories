@@ -8,3 +8,4 @@ models/gpt2_256_8.ckpt
 models/gpt2_512_8.ckpt
 models/gpt2_128_12.ckpt
 models/gpt2_256_12.ckpt
+models/gpt2_512_12.ckpt
