@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from utils.tokenizer import gpt_neo_tokenizer, gpt2_tokenizer
 from tqdm import tqdm
 
-bins = [i * 0.05 for i in range(21)]
+bins = [i * 0.01 for i in range(101)]
 
 def calculate_rouge(reference: str, hypothesis: str, n: int, metric: str):
     if metric not in ['precision', 'recall', 'fmeasure']:
@@ -85,17 +85,22 @@ def max_rouge2_self(stories, model_name):
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tokenizer = gpt_neo_tokenizer()
-    model = GPT2.load_from_checkpoint(
-        "checkpoints/gpt2_256_12.ckpt", tokenizer=tokenizer
-    ).to(device)
 
-    with open("data/100_train_stories.json", "r") as f:
-        original_stories = json.load(f)
-    
-    generated_stories = get_completions(original_stories, model)
+    model_names = ['gpt2_128_8','gpt2_256_8','gpt2_512_8','gpt2_128_12','gpt2_256_12', 'gpt2_512_12']
+    for model_name in model_names:
+        n_embd = int(model_name.split('_')[1])
+        n_layer = int(model_name.split('_')[2])
+        model = GPT2.load_from_checkpoint(
+            f"checkpoints/{model_name}.ckpt", tokenizer=tokenizer, n_embd=n_embd, n_layer=n_layer
+        ).to(device)
 
-    rouge2_completion_orig(original_stories, generated_stories, "gpt2_256_12")
-    max_rouge2_self(generated_stories, "gpt2_256_12")
+        with open("data/100_train_stories.json", "r") as f:
+            original_stories = json.load(f)
+        
+        generated_stories = get_completions(original_stories, model)
+
+        rouge2_completion_orig(original_stories, generated_stories, model_name)
+        max_rouge2_self(generated_stories, model_name)
 
 if __name__ == "__main__":
     main()
