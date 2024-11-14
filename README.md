@@ -14,16 +14,16 @@
 
 ## How to run
 
-- ```python3 -m scripts.evaluate_gpt2_pretrained``` evaluates the model defined in the said file.
+- `python3 -m scripts.evaluate_gpt2_pretrained` evaluates the model defined in the said file.
 
-- ```python3 -m data.tinystories``` creates cache of the tinystories dataset
+- `python3 -m data.tinystories` creates cache of the tinystories dataset
 
-- ```python3 -m models.gpt2``` to check the model on an example input and example generation(gibberish for now).
+- `python3 -m models.gpt2` to check the model on an example input and example generation(gibberish for now).
 
 ```
 .
 ├── data
-│   ├── 50_stories.json
+│   ├── 50_val_stories.json
 │   ├── __init__.py
 │   └── tinystories.py
 ├── models

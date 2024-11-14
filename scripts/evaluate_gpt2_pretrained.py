@@ -1,15 +1,18 @@
-from transformers import AutoModelForCausalLM, GenerationConfig, AutoTokenizer
-import torch
 import json
 import random
+
+import torch
 from tqdm import tqdm
+from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
+
 from utils.llama_together_ai import evaluate_story
 from utils.tokenizer import gpt2_tokenizer, gpt_neo_tokenizer
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
 def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
-    with open("data/50_stories.json", "r") as f:
+    with open("data/50_val_stories.json", "r") as f:
         stories = json.load(f)
 
     stories = random.sample(stories, num_stories)
@@ -21,10 +24,9 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
         0,
     )
 
-
     for orig_story in tqdm(stories):
         for _ in range(num_repeats):
-            st = 'Given is the starting of a story. You should Complete it.'
+            st = "Given is the starting of a story. You should Complete it."
             ll = len(st)
             story = st + orig_story
             story = story.split()
@@ -36,10 +38,16 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
                 break
 
             input_ids = tokenizer.encode(story, return_tensors="pt").to(device)
-            output = model.generate(input_ids, max_length = 1000, num_beams=1, pad_token_id=tokenizer.pad_token_id, eos_token_id=tokenizer.eos_token_id)
+            output = model.generate(
+                input_ids,
+                max_length=1000,
+                num_beams=1,
+                pad_token_id=tokenizer.pad_token_id,
+                eos_token_id=tokenizer.eos_token_id,
+            )
             output_text = tokenizer.decode(output[0], skip_special_tokens=True)
             story_for_prompt = story[ll:] + " ***" + output_text[len(story) :]
-            
+
             # print("story:" , story)
             # print("output_text:", output_text)
             # print("story_for_prompt:", story_for_prompt)
@@ -65,10 +73,13 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
         "avg_plot_sense": avg_plot_sense,
     }
 
+
 def main():
-    
+
     tokenizer = gpt_neo_tokenizer()
-    model = AutoModelForCausalLM.from_pretrained("openai-community/gpt2-large").to(device)
+    model = AutoModelForCausalLM.from_pretrained("openai-community/gpt2-large").to(
+        device
+    )
     # prompt = "Once upon a time there was"
 
     # input_ids = tokenizer.encode(prompt, return_tensors="pt")
@@ -78,6 +89,7 @@ def main():
     ret = evaluate_model(model, tokenizer)
     print(ret)
     json.dump(ret, open("data/gpt2med_eval.json", "w"), indent=4)
+
 
 if __name__ == "__main__":
     main()
