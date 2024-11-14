@@ -47,8 +47,52 @@ def evaluate_story(story):
 
     print("*********************")
     print("holistic_feedback: ", holistic_feedback)
-    response = model.generate_content(f"{story}\n\nHolistic Evaluation:{holistic_feedback}\n\nNow, grade the student's completion in terms of grammar, creativity, consistency with the story's beginning, and whether the plot makes sense.\n\nPlease provide the grading in JSON format with the keys 'grammar', 'creativity', 'consistency', 'plot_sense', as a number from 1 to 10. DO NOT OUTPUT ANYTHING BUT THE JSON.")
+    response = model.generate_content(f"{story}\n\nHolistic Evaluation:{holistic_feedback}\n\nNow, grade the student's completion in terms of grammar, creativity, consistency with the story's beginning, and whether the plot makes sense.\n\nPlease provide the grading in JSON format with the keys 'grammar', 'creativity', 'consistency', 'plot_sense', as a number from 1 to 10. DO NOT OUTPUT ANYTHING BUT THE JSON. The holistic evaluation given is for your assistance.")
     return response.text
+
+def evaluate_prompt(story, type):
+    model = load_model()
+
+    res1 = model.generate_content(
+        f"In the following exercise, the student is given a prompt. The student needs to complete it. "
+        f"The exercise solely tests the student's "
+        f"{'factual knowledge from the prompt' if type == 0 else ('reasoning ability' if type == 1 else 'context-tracking')}. "
+        "The symbol *** marks the separator between the prescribed beginning and the student's completion. "
+        f"Evaluate the student's completion of the prompt (following the *** separator), focusing on their"
+        f"{'factual knowledge from the prompt' if type == 0 else ('reasoning ability' if type == 1 else 'context-tracking')}. "
+        "ONLY EVALUATE THE COMPLETION UNTIL THE FIRST END OF SENTENCE IS ENCOUNTERED AFTER ***. IGNORE THE NEXT PARTS OF THE COMPLETION. "
+        "Provide a concise, holistic evaluation on their completion, without discussing the prompt's content in at most 1 paragraph. "
+        "Do not generate a sample completion or provide feedback at this time.\n\n"
+        f"{story}"
+    )
+
+    try:
+        if res1 and res1.candidates:
+            candidate = res1.candidates[0]  # Take the first candidate response
+            safety_ratings = candidate.safety_ratings
+
+            # Verify if content is blocked
+            if safety_ratings and any(rating.blocked for rating in safety_ratings):
+                print("Response blocked due to safety filters.")
+                holistic_feedback = ""
+            else:
+                holistic_feedback = res1.text
+    except:
+        holistic_feedback = ""
+
+    # print("*********************")
+    # print("holistic_feedback: ", holistic_feedback)
+    response = model.generate_content(
+        f"{story}\n\nHolistic Evaluation:{holistic_feedback}\n\nNow, grade the student's completion solely in terms of "
+        f"{'factual knowledge' if type == 0 else ('reasoning ability' if type == 1 else 'context-tracking')} based on the prompt.\n\n"
+        f"Please provide the grading in JSON format with the key "
+        f"{'factual knowledge' if type == 0 else ('reasoning ability' if type == 1 else 'context-tracking ability')}. "
+        "The value should be one of the following: 0 (no factual knowledge), 1 (minimal factual knowledge), 2 (decent factual knowledge)."
+        "ONLY EVALUATE THE COMPLETION UNTIL THE FIRST END OF SENTENCE IS ENCOUNTERED AFTER ***. IGNORE THE NEXT PARTS OF THE COMPLETION. "
+        "DO NOT OUTPUT ANYTHING BUT THE JSON. The holistic evaluation given is for your assistance."
+    )
+    return response.text
+
 
 
 if __name__ == "__main__":

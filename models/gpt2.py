@@ -32,9 +32,9 @@ class GPT2(L.LightningModule):
 
         self.test_generations = []
 
-    def forward(self, input_ids, attention_mask, labels=None):
+    def forward(self, input_ids, attention_mask,output_attentions=False,output_hidden_states=False, labels=None):
         return self.model(
-            input_ids=input_ids, attention_mask=attention_mask, labels=labels
+            input_ids=input_ids, attention_mask=attention_mask, labels=labels,output_attentions=output_attentions,output_hidden_states=output_hidden_states
         )
 
     def training_step(self, batch, batch_idx):
