@@ -44,7 +44,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
             
             # print("story:" , story)
             # print("output_text:", output_text)
-            # print("story_for_prompt:", story_for_prompt)
+            print("story_for_prompt:", story_for_prompt)
             # return
 
             eval_msg = evaluate_story(story_for_prompt)
@@ -77,7 +77,7 @@ def main():
     # model=model.to(device)
 
     model = GPT2.load_from_checkpoint(
-        "checkpoints/gpt2_128_12.ckpt", tokenizer=tokenizer
+        "models/gpt2_256_12.ckpt", tokenizer=tokenizer
     ).to(device)
 
     # prompt = "Once upon a time there was"
@@ -88,7 +88,7 @@ def main():
     # print(output_text)
     ret = evaluate_model(model, tokenizer)
     print(ret)
-    json.dump(ret, open("data/gpt2_128_12_eval.json", "w"), indent=4)
+    # json.dump(ret, open("data/gpt2_256_12_eval.json", "w"), indent=4)
 
 if __name__ == "__main__":
     main()
