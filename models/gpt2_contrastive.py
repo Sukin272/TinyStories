@@ -3,10 +3,33 @@ import pytorch_lightning as L
 import torch.nn.functional as F
 from transformers import GPT2Config, GPT2LMHeadModel
 from utils.config import config
+import random
 
+def shuffle_groups_between_ones(tensor, one_id=1, ten_id=10):
+    result = tensor.clone()
+    for row_idx in range(tensor.shape[0]):
+        row = tensor[row_idx]
+        ten_idx = (row == ten_id).nonzero(as_tuple=True)[0][0]
+        one_indices = (row[:ten_idx] == one_id).nonzero(as_tuple=True)[0]
+        if len(one_indices) < 2:
+            continue
+        groups = []
+        start_idx = 0
+        for one_idx in one_indices:
+            group = row[start_idx:one_idx+1].tolist()
+            groups.append(group)
+            start_idx = one_idx + 1
+        if start_idx < ten_idx:
+            groups.append(row[start_idx:ten_idx].tolist())
+        random.shuffle(groups)
+        new_sequence = []
+        for group in groups:
+            new_sequence.extend(group)
+        result[row_idx, :ten_idx] = torch.tensor(new_sequence)
+    return result
 
 class GPT2(L.LightningModule):
-    def __init__(self, tokenizer, learning_rate=0.0001, n_embd=config.model.gpt2["hidden_size"], n_layer=config.model.gpt2["layers"]):
+    def __init__(self, tokenizer, learning_rate=0.0001):
         super().__init__()
         self.save_hyperparameters()
 
@@ -14,8 +37,8 @@ class GPT2(L.LightningModule):
             vocab_size=len(tokenizer),
             n_positions=config.data.max_length,
             n_ctx=config.data.max_length,
-            n_embd=n_embd,
-            n_layer=n_layer,
+            n_embd=config.model.gpt2["hidden_size"],
+            n_layer=config.model.gpt2["layers"],
             n_head=config.model.gpt2["heads"],
             bos_token_id=tokenizer.bos_token_id,
             eos_token_id=tokenizer.eos_token_id,
@@ -32,9 +55,9 @@ class GPT2(L.LightningModule):
 
         self.test_generations = []
 
-    def forward(self, input_ids, attention_mask,output_attentions=False,output_hidden_states=False, labels=None):
+    def forward(self, input_ids, attention_mask, labels=None):
         return self.model(
-            input_ids=input_ids, attention_mask=attention_mask, labels=labels,output_attentions=output_attentions,output_hidden_states=output_hidden_states
+            input_ids=input_ids, attention_mask=attention_mask, labels=labels
         )
 
     def training_step(self, batch, batch_idx):
@@ -51,7 +74,23 @@ class GPT2(L.LightningModule):
         loss = outputs.loss
 
         full_stop_idx = tokenizer.encode(".")[0]
-        
+
+        print(input_ids.shape, full_stop_idx, tokenizer.eos_token_id)
+         
+        contrastive_inputs = shuffle_groups_between_ones(input_ids,full_stop_idx, tokenizer.eos_token_id)
+
+        contrastive_inputs = contrastive_inputs[:contrastive_inputs.shape[0]//3, :].to(input_ids.device)
+
+        outputs = self(
+            input_ids=contrastive_inputs,
+            attention_mask=attention_mask,
+            labels=contrastive_inputs,
+        )
+
+        con_loss = outputs.loss
+
+        loss += 0.3/(con_loss + 0.01)
+
 
         self.log("train_loss", loss)
 
@@ -113,6 +152,8 @@ if __name__ == "__main__":
     input_ids, labels = torch.randint(0, len(tokenizer), (4, 128)), torch.randint(
         0, len(tokenizer), (4, 128)
     )
+
+    input_ids[:, -1] = tokenizer.eos_token_id
     attention_mask = torch.ones_like(input_ids)
 
     loss = model.training_step(
