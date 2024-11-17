@@ -154,34 +154,34 @@ def main():
     # Analyze attention patterns
     text = """Once upon a time, there was a little girl named Lily. She was very scared of the dark and had a nightmare every night. One day, she told her mom about her nightmare.\n\n\"I had a bad dream last night, Mommy,\" said Lily.\n\n\"What did you dream about, sweetie?\" asked her mom.\n\n\"I dreamt that a big monster came out of my closet and scared me,\" replied Lily.\n\n\"Oh no, that sounds scary,\" said her mom."""
     
-    attention_patterns, tokens = interpreter.get_attention_patterns(text)
+    # attention_patterns, tokens = interpreter.get_attention_patterns(text)
     
-    # Visualize each attention head
-    for head_idx in range(attention_patterns.shape[0]):
-        interpreter.visualize_attention_head(
-            head_idx, 
-            attention_patterns, 
-            tokens,
-            f"interpret_vis/attention_head_{head_idx}_512_12.png"
-        )
+    # # Visualize each attention head
+    # for head_idx in range(attention_patterns.shape[0]):
+    #     interpreter.visualize_attention_head(
+    #         head_idx, 
+    #         attention_patterns, 
+    #         tokens,
+    #         f"interpret_vis/attention_head_{head_idx}_512_12.png"
+    #     )
         
-        # Classify attention type
-        attention_patterns = attention_patterns.to(torch.device("cuda"))
-        att_type = interpreter.classify_attention_type(attention_patterns[head_idx])
-        print(f"Head {head_idx}: {att_type} attention")
+    #     # Classify attention type
+    #     attention_patterns = attention_patterns.to(torch.device("cuda"))
+    #     att_type = interpreter.classify_attention_type(attention_patterns[head_idx])
+    #     print(f"Head {head_idx}: {att_type} attention")
     
-    # # Analyze neurons
-    # stories = json.loads(open("data/50_val_stories.json").read())
+    # Analyze neurons
+    stories = json.loads(open("data/50_val_stories.json").read())
     
-    # neuron_analysis = interpreter.analyze_neurons(stories, layer_idx=6)
+    neuron_analysis = interpreter.analyze_neurons(stories, layer_idx=1)
     
-    # # Print results for first few neurons
-    # for neuron_idx in list(neuron_analysis.keys())[:3]:
-    #     print(f"\nNeuron {neuron_idx} top activations:")
-    #     for activation in neuron_analysis[neuron_idx]:
-    #         print(f"Token: {activation['token']}")
-    #         print(f"Context: {activation['context']}")
-    #         print(f"Activation: {activation['activation']:.4f}")
+    # Print results for first few neurons
+    for neuron_idx in list(neuron_analysis.keys())[:3]:
+        print(f"\nNeuron {neuron_idx} top activations:")
+        for activation in neuron_analysis[neuron_idx]:
+            print(f"Token: {activation['token']}")
+            print(f"Context: {activation['context']}")
+            print(f"Activation: {activation['activation']:.4f}")
 
 if __name__ == "__main__":
     main()
