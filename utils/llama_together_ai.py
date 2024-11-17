@@ -47,7 +47,7 @@ def evaluate_story(story):
 
     print("*********************")
     print("holistic_feedback: ", holistic_feedback)
-    response = model.generate_content(f"{story}\n\nHolistic Evaluation:{holistic_feedback}\n\nNow, grade the student's completion in terms of grammar, creativity, consistency with the story's beginning, and whether the plot makes sense.\n\nPlease provide the grading in JSON format with the keys 'grammar', 'creativity', 'consistency', 'plot_sense', as a number from 1 to 10. DO NOT OUTPUT ANYTHING BUT THE JSON. The holistic evaluation given is for your assistance.")
+    response = model.generate_content(f"{story}\n\nHolistic Evaluation:{holistic_feedback}\n\nNow, grade the student's completion in terms of grammar, creativity, consistency with the story's beginning, and whether the plot makes sense.\n\nPlease provide the grading in JSON format with the keys 'grammar', 'creativity', 'consistency', 'plot_sense', as a number from 1 to 10. DO NOT OUTPUT ANYTHING BUT THE JSON STRICTLY, DIRECTLY START WITH THE JSON BRACKETS. DO NOT START WITH ```json and end with ```. The holistic evaluation given is for your assistance.")
     return response.text
 
 def evaluate_story_instruct(story):
