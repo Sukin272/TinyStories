@@ -119,7 +119,7 @@ if __name__ == "__main__":
     dm.setup()
 
     val_dataloader = dm.train_dataloader()
-
+    
     for batch in val_dataloader:
         print(batch)
         print(tokenizer.decode(batch["input_ids"][0]))

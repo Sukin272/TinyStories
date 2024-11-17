@@ -6,7 +6,7 @@ from utils.config import config
 
 
 class GPT2(L.LightningModule):
-    def __init__(self, tokenizer, learning_rate=0.0001):
+    def __init__(self, tokenizer, learning_rate=0.0001, n_embd=config.model.gpt2["hidden_size"], n_layer=config.model.gpt2["layers"]):
         super().__init__()
         self.save_hyperparameters()
 
@@ -14,8 +14,8 @@ class GPT2(L.LightningModule):
             vocab_size=len(tokenizer),
             n_positions=config.data.max_length,
             n_ctx=config.data.max_length,
-            n_embd=config.model.gpt2["hidden_size"],
-            n_layer=config.model.gpt2["layers"],
+            n_embd=n_embd,
+            n_layer=n_layer,
             n_head=config.model.gpt2["heads"],
             bos_token_id=tokenizer.bos_token_id,
             eos_token_id=tokenizer.eos_token_id,
