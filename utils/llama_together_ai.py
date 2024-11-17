@@ -50,6 +50,30 @@ def evaluate_story(story):
     response = model.generate_content(f"{story}\n\nHolistic Evaluation:{holistic_feedback}\n\nNow, grade the student's completion in terms of grammar, creativity, consistency with the story's beginning, and whether the plot makes sense.\n\nPlease provide the grading in JSON format with the keys 'grammar', 'creativity', 'consistency', 'plot_sense', as a number from 1 to 10. DO NOT OUTPUT ANYTHING BUT THE JSON. The holistic evaluation given is for your assistance.")
     return response.text
 
+def evaluate_story_instruct(story):
+    model=load_model()
+
+    res1 = model.generate_content(f"In the following exercise, the student is given the  details that the story they have to write is supposed to have. The student needs to write a full story. The exercise tests the student's language abilities and majorly ability to follow the instructions. The student's story starts after Story: . Evaluate the student's story, focusing on their language abilities and particularly focus on the instructions provided and whether they follow the story or not. Provide a concise, holistic evaluation on their writing, without discussing the story's content in at most 1 paragraph. Do not generate a sample completion or provide feedback at this time. It is ok if the story is incomplete. Evaluate the story written so far.\n\n{story}")
+    # print(holistic_feedback.text)
+    try:
+        if res1 and res1.candidates:
+                candidate = res1.candidates[0]  # Take the first candidate response
+                safety_ratings = candidate.safety_ratings
+
+                # Verify if content is blocked
+                if safety_ratings and any(rating.blocked for rating in safety_ratings):
+                    print("Response blocked due to safety filters.")
+                    holistic_feedback = ""
+                else:
+                    holistic_feedback = res1.text
+    except:
+        holistic_feedback = ""
+
+    print("*********************")
+    print("holistic_feedback: ", holistic_feedback)
+    response = model.generate_content(f"{story}\n\nHolistic Evaluation:{holistic_feedback}\n\nNow, grade the student's story in terms of instruction following.\n\nPlease provide the grading for instruction following ability, grammar, consistency, creativity and plot sense with a single number between 0 to 10 for each. DO NOT OUTPUT ANYTHING BUT THE JSON STRICTLY, DIRECTLY START WITH THE JSON BRACKETS. DO NOT START WITH ```json and end with ```. They keys would be 'grammar','consistency','creativity','plot_sense','instruction_ability'. The holistic evaluation given is for your assistance.")
+    return response.text
+
 def evaluate_prompt(story, type):
     model = load_model()
 
