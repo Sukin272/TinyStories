@@ -85,7 +85,7 @@ def main():
     # model=model.to(device)
 
     model = GPT2.load_from_checkpoint(
-        "checkpoints/gptc_512_8.ckpt", tokenizer=tokenizer
+        "checkpoints/gpt2_256_8_2.ckpt", tokenizer=tokenizer
     ).to(device)
 
     # prompt = "Once upon a time there was"
@@ -96,7 +96,7 @@ def main():
     # print(output_text)
     ret = evaluate_model(model, tokenizer)
     print(ret)
-    json.dump(ret, open("data/contrastive_evals/gptc_512_8_eval.json", "w"), indent=4)
+    json.dump(ret, open("data/normal_evals/gpt2_256_8_2_eval.json", "w"), indent=4)
 
 
 if __name__ == "__main__":
