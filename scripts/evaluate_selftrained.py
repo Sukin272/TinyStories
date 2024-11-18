@@ -42,7 +42,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
             input_ids = tokenizer.encode(story, return_tensors="pt").to(device)
             output = model.model.generate(
                 input_ids,
-                max_length=512,
+                max_length=200,
                 pad_token_id=tokenizer.pad_token_id,
                 eos_token_id=tokenizer.eos_token_id,
             )
@@ -85,7 +85,7 @@ def main():
     # model=model.to(device)
 
     model = GPT2.load_from_checkpoint(
-        "checkpoints/gptc_128_8.ckpt", tokenizer=tokenizer
+        "checkpoints/gpt2_256_8_2.ckpt", tokenizer=tokenizer
     ).to(device)
 
     # prompt = "Once upon a time there was"
@@ -96,7 +96,7 @@ def main():
     # print(output_text)
     ret = evaluate_model(model, tokenizer)
     print(ret)
-    json.dump(ret, open("data/contrastive_evals/gptc_128_8_eval.json", "w"), indent=4)
+    json.dump(ret, open("data/normal_evals/gpt2_256_8_2_eval.json", "w"), indent=4)
 
 
 if __name__ == "__main__":
