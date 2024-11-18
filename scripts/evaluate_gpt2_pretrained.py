@@ -50,7 +50,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
 
             # print("story:" , story)
             # print("output_text:", output_text)
-            # print("story_for_prompt:", story_for_prompt)
+            print("story_for_prompt:", story_for_prompt)
             # return
 
             eval_msg = evaluate_story(story_for_prompt)
@@ -76,7 +76,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
 
 def main():
 
-    tokenizer = gpt_neo_tokenizer()
+    tokenizer = gpt2_tokenizer()
     model = AutoModelForCausalLM.from_pretrained("openai-community/gpt2-large").to(
         device
     )
@@ -88,7 +88,7 @@ def main():
     # print(output_text)
     ret = evaluate_model(model, tokenizer)
     print(ret)
-    json.dump(ret, open("data/gpt2med_eval.json", "w"), indent=4)
+    json.dump(ret, open("data/gpt2_large_eval.json", "w"), indent=4)
 
 
 if __name__ == "__main__":
