@@ -34,6 +34,10 @@
 
 https://drive.google.com/drive/folders/1x4EZk-Ob300gzbrsC0G5sFtYR1uBrZru?usp=sharing
 
+## Link to the Presentation
+
+https://www.canva.com/design/DAGXBy3sDXo/Dj7jOp_PEfV1gCuvFDnJKA/edit?utm_content=DAGXBy3sDXo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 ## Folder tree (with all the trained models and caches)
 
 ```
