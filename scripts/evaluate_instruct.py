@@ -31,7 +31,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
         for _ in range(num_repeats):
             st = "Given are the features, words or the summary of a story. You should write the story so that it aligns with them."
             ll = len(st)
-            story = st + orig_story
+            # story = st + orig_story
             story = story
 
             # while 1:
@@ -39,7 +39,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
             #     temp_story = " ".join(temp_story)
             #     story = temp_story
             #     break
-
+            print("story:", story)
             input_ids = tokenizer.encode(story, return_tensors="pt").to(device)
             output = model.model.generate(
                 input_ids,
@@ -52,8 +52,7 @@ def evaluate_model(model, tokenizer, num_stories=10, num_repeats=2):
 
             # print("story:" , story)
             # print("output_text:", output_text)
-            # print("story_for_prompt:", story_for_prompt)
-            # return
+            print("story_for_prompt:", story_for_prompt)
 
             eval_msg = evaluate_story_instruct(story_for_prompt)
             print(eval_msg)
@@ -90,7 +89,7 @@ def main():
     # model=model.to(device)
 
     model = GPT2.load_from_checkpoint(
-        "models/gpti_128_8.ckpt", tokenizer=tokenizer
+        "checkpoints/gpti_512_8.ckpt", tokenizer=tokenizer
     ).to(device)
 
     # prompt = "Once upon a time there was"

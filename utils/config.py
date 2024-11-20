@@ -1,6 +1,10 @@
 from dataclasses import dataclass, field
 from typing import Dict
+import sys
 
+embed = 256
+num_layer = 8
+num_head = 4
 
 @dataclass
 class DataConfig:
@@ -9,7 +13,6 @@ class DataConfig:
     batch_size: int = 8
     max_length: int = 512
 
-
 @dataclass
 class TokenizerConfig:
     name: str = "gpt_neo"
@@ -17,12 +20,41 @@ class TokenizerConfig:
         ".cache/tokenizer"
     )
 
-
 @dataclass
 class ModelConfig:
     name: str = "gpt2"
     gpt2: Dict[str, int] = field(
-        default_factory=lambda: {"hidden_size": 256, "layers": 8, "heads": 2}
+        default_factory=lambda: {"hidden_size": 512, "layers": 8, "heads": 4}
+    )
+    compressor: Dict[str, int] = field(
+        default_factory=lambda: {
+            "n_positions": 512,
+            "d_model": embed,
+            "n_head": num_head,
+            "n_layers": num_layer//2,
+            "dim_feedforward": 1024,
+            "dropout": 0.1,
+            "compression_ratio": 2,  # 2 token will be conatenated going to d_model * 2 then scaled down by this ratio.
+        }
+    )
+    bigger_transformer: Dict[str, int] = field(
+        default_factory=lambda: {
+            "d_model": embed,
+            "n_head": num_head,
+            "n_layers": num_layer,
+            "dim_feedforward": 1024,
+            "dropout": 0.1,
+        }
+    )
+    decompressor: Dict[str, int] = field(
+        default_factory=lambda: {
+            "n_positions": 512,
+            "d_model": embed,
+            "n_head": num_head,
+            "n_layers": num_layer//2,
+            "dim_feedforward": 1024,
+            "dropout": 0.1,
+        }
     )
 
 

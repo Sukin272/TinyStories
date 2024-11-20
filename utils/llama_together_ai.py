@@ -105,7 +105,7 @@ def evaluate_prompt(story, type):
         holistic_feedback = ""
 
     # print("*********************")
-    # print("holistic_feedback: ", holistic_feedback)
+    print("holistic_feedback: ", holistic_feedback)
     response = model.generate_content(
         f"{story}\n\nHolistic Evaluation:{holistic_feedback}\n\nNow, grade the student's completion solely in terms of "
         f"{'factual knowledge' if type == 0 else ('reasoning ability' if type == 1 else 'context-tracking')} based on the prompt.\n\n"
@@ -113,7 +113,7 @@ def evaluate_prompt(story, type):
         f"{'factual knowledge' if type == 0 else ('reasoning ability' if type == 1 else 'context-tracking ability')}. "
         "The value should be one of the following: 0 (no factual knowledge), 1 (minimal factual knowledge), 2 (decent factual knowledge)."
         "ONLY EVALUATE THE COMPLETION UNTIL THE FIRST END OF SENTENCE IS ENCOUNTERED AFTER ***. IGNORE THE NEXT PARTS OF THE COMPLETION. "
-        "DO NOT OUTPUT ANYTHING BUT THE JSON. The holistic evaluation given is for your assistance."
+        "DO NOT OUTPUT ANYTHING BUT THE JSON STRICTLY, DIRECTLY START WITH THE JSON BRACKETS. DO NOT START WITH ```json and end with ```. The holistic evaluation given is for your assistance."
     )
     return response.text
 

@@ -61,8 +61,8 @@ def load_data(folder_path):
 def main():
     folder_path = "data/normal_evals"
     load_data(folder_path)
-    folder_path = "data/contrastive_evals"
-    load_data(folder_path)
+    # folder_path = "data/contrastive_evals"
+    # load_data(folder_path)
 
     global json_data
 
@@ -72,18 +72,18 @@ def main():
 
     names_to_evaluate = [
         "gpt2_128_8_eval",
-        "gptc_128_8_eval",
+        "comp_128_8_eval",
         "gpt2_256_8_eval",
-        "gptc_256_8_eval",
+        "comp_256_8_eval",
         "gpt2_512_8_eval",
-        "gptc_512_8_eval",
+        "comp_512_8_eval",
     ]
     json_data = {name: json_data[name] for name in names_to_evaluate}
 
     plot_evaluation_metrics(
         *json_data.items(),
         title="Model Evaluation Metrics Comparison",
-        fig_name="contrastive.png",
+        fig_name="compression.png",
     )
 
 
